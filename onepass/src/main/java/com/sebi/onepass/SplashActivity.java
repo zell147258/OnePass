@@ -22,7 +22,7 @@ public class SplashActivity extends Activity {
 
 
     private static final long MIN_WAIT_INTERVAL = 1500L;
-    private static final long MAX_WAIT_INTERVAL = 3000L;
+    private static final long MAX_WAIT_INTERVAL = 30000L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,12 +99,11 @@ public class SplashActivity extends Activity {
 
 
         private void goAhead() {
-            final Intent intent = new Intent(this, FirstAccessActivity.class);
+            final Intent intent = new Intent(this.getActivity(), FirstAccessActivity.class);
             startActivity(intent);
         }
 
         private UiHandler mHandler;
-
 
 
         @Override
@@ -120,22 +119,22 @@ public class SplashActivity extends Activity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             mHandler = new UiHandler(this);
-            final ImageView logo = (ImageView) getView().findViewById(R.id.imgLogoView);
-            logo.setOnTouchListener( new View.OnTouchListener() {
+            View rootView = inflater.inflate(R.layout.fragment_splash, container, false);
+            final ImageView logo = (ImageView) rootView.findViewById(R.id.imgLogoView);
+            logo.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
                     long elapsedTime = SystemClock.uptimeMillis() - mStartTime;
-                    if(elapsedTime >= MIN_WAIT_INTERVAL && !mIsDone){
+                    if (elapsedTime >= MIN_WAIT_INTERVAL && !mIsDone) {
                         mIsDone = true;
                         goAhead();
                         return true;
-                    }
-                    else
+                    } else
                         return false;
                 }
             });
 
-            View rootView = inflater.inflate(R.layout.fragment_splash, container, false);
+
             return rootView;
         }
     }

@@ -16,6 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.sebi.onepass.FirstAccessActivity"
+            android:label="@string/title_activity_first_access" >
+        </activity>
     </application>
 
 </manifest>
