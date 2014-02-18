@@ -22,7 +22,7 @@ public class SplashActivity extends Activity {
 
 
     private static final long MIN_WAIT_INTERVAL = 1500L;
-    private static final long MAX_WAIT_INTERVAL = 30000L;
+    private static final long MAX_WAIT_INTERVAL = 3000L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +66,11 @@ public class SplashActivity extends Activity {
 
 
         private static final int GO_AHEAD_WHAT = 1;
-        private long mStartTime;
+        private long mStartTime = -1L;
         private boolean mIsDone;
+
+        private static final String IS_DONE_KEY = "com.sebi.onepass.key.IS_DONE_KEY";
+        private static final String START_TIME_KEY = "com.sebi.onepass.key.START_TIME_KEY";
 
         private static class UiHandler extends Handler {
             private WeakReference<SplashFragment> mActivityRef;
@@ -101,6 +104,8 @@ public class SplashActivity extends Activity {
         private void goAhead() {
             final Intent intent = new Intent(this.getActivity(), FirstAccessActivity.class);
             startActivity(intent);
+            getActivity().finish();
+
         }
 
         private UiHandler mHandler;
@@ -109,8 +114,8 @@ public class SplashActivity extends Activity {
         @Override
         public void onStart() {
             super.onStart();
-
-            mStartTime = SystemClock.uptimeMillis();
+            if(mStartTime == -1L)
+                mStartTime = SystemClock.uptimeMillis();
             final Message goAheadMessage = mHandler.obtainMessage(GO_AHEAD_WHAT);
             mHandler.sendMessageAtTime(goAheadMessage, mStartTime + MAX_WAIT_INTERVAL);
         }
@@ -118,8 +123,15 @@ public class SplashActivity extends Activity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            if (savedInstanceState != null) {
+                mStartTime = savedInstanceState.getLong(START_TIME_KEY);
+                mIsDone = savedInstanceState.getBoolean(IS_DONE_KEY);
+            }
             mHandler = new UiHandler(this);
+
             View rootView = inflater.inflate(R.layout.fragment_splash, container, false);
+
+
             final ImageView logo = (ImageView) rootView.findViewById(R.id.imgLogoView);
             logo.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -137,6 +149,15 @@ public class SplashActivity extends Activity {
 
             return rootView;
         }
+
+        @Override
+        public void onSaveInstanceState(android.os.Bundle outState) {
+            super.onSaveInstanceState(outState);
+            outState.putBoolean(IS_DONE_KEY, mIsDone);
+            outState.putLong(START_TIME_KEY, mStartTime);
+        }
+
+
     }
 
 }
